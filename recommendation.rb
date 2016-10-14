@@ -150,7 +150,7 @@ def top_matches(prefs, user, n)
     scores.sort.reverse[0,n]
 end
 
-#類似度が高いユーザーの評点の加重平均を使い推薦する映画を算出する
+#類似度の高いユーザが観た映画の中から，さらに加重平均を使い推薦する映画を算出する
 #各データをxi，重みをwiとしたときの加重平均 (w1*x1+...+wn*xn)/(w1+...wn)
 def get_recommendations(prefs, user, gdata, favo)
     totals = Hash.new(0)

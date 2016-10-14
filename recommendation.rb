@@ -139,17 +139,6 @@ def pearson(prefs, user1, user2)
     return num/den #(ΣXY-((ΣX*ΣY)/N))/√((ΣX^2-(ΣX^2/N))*(ΣY^2-(ΣY^2/N)))
 end
 
-#類似度トップn位を出す
-def top_matches(prefs, user, n)
-    scores = Array.new
-    prefs.each do |other,val|
-        if other != user
-            scores << [pearson(prefs,user,other),other] #ピアソン相関係数で類似度を算出する
-        end
-    end
-    scores.sort.reverse[0,n]
-end
-
 #類似度の高いユーザが観た映画の中から，さらに加重平均を使い推薦する映画を算出する
 #各データをxi，重みをwiとしたときの加重平均 (w1*x1+...+wn*xn)/(w1+...wn)
 def get_recommendations(prefs, user, gdata, favo)
@@ -157,12 +146,13 @@ def get_recommendations(prefs, user, gdata, favo)
     co_sums = Hash.new(0)
     n=10
     
-    topn=top_matches(prefs,user,n)#類似度が高いユーザトップn人を算出する
-
-    topn.each do |co,other|#類似度の高いユーザが観た映画のみから推薦する
+    prefs.each do |other,val|
+        next if other == user # 自分自身とは比較しない
+        co = pearson(prefs,user,other)
+        next if co <= 0.4 #やや相関有り以上のユーザ
         prefs[other].each do |itemid, rating|
-            if !prefs[user].keys.include?(itemid) #まだ観ていない映画
-                favo.each do |genre,count|#ユーザがよく観るジャンルトップ5の映画のみを推薦する
+            if !prefs[user].keys.include?(itemid) # まだ観ていない映画を出す
+                favo.each do |genre,count| #ユーザがよく観るジャンルトップ5の映画のみを推薦する
                     if gdata[itemid]==genre
                         totals[itemid] += prefs[other][itemid]*co #加重平均分子
                         co_sums[itemid] += co #加重平均分母

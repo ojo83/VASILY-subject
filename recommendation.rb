@@ -2,8 +2,6 @@
 #http://qiita.com/ynakayama/items/ceb3f6408231ea3d230c
 #https://github.com/ynakayama/sandbox/blob/master/ruby/machine-learning/recommendation/recommendations.rb
 #http://memo.sugyan.com/entry/20081007/1223331850
-require 'rubygems'
-require 'awesome_print'
 
 #############################データの格納#############################
 #ユーザデータの格納
